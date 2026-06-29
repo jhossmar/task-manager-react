@@ -2,8 +2,8 @@ import React from 'react';
 
 function Header(): React.JSX.Element {
     return (
-        <header>
-            <h1>Task Manager Yay</h1>
+        <header id='Title'>
+            <h1>Task Manager</h1>
         </header>
     );
 }

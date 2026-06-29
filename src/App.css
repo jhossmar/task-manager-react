@@ -1,43 +1,67 @@
+.title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1765e2; /* Darker slate for better readability */
+    margin-bottom: 12px;
+}
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    padding: 30px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f8fafc; /* Modern, soft slate-gray background */
+    padding: 40px 20px;
     margin: 0;
+    -webkit-font-smoothing: antialiased;
 }
 
 .app-container {
     max-width: 600px;
     margin: auto;
-    background-color: white;
-    padding: 25px;
-    border-radius: 10px;
+    background-color: #ffffff;
+    padding: 35px;
+    border-radius: 16px; /* Smoother, larger corner rounding */
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05); /* Soft, subtle modern shadow */
 }
 
 header {
-    margin-bottom: 20px;
+    margin-bottom: 28px;
     text-align: center;
 }
 
 header h1 {
-    margin-bottom: 5px;
-    color: #333;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #0f172a; /* Deeper, rich dark color for better contrast */
+    letter-spacing: -0.5px;
 }
 
 header p {
-    color: #555;
+    color: #64748b; /* Lighter, muted slate for subtitles */
     margin-top: 0;
+    font-size: 15px;
 }
 
 ul {
     padding: 0;
-    margin-top: 20px;
+    margin: 24px 0 0 0;
 }
 
 li {
     list-style: none;
-    background-color: #f1f1f1;
-    padding: 12px;
-    margin-bottom: 10px;
-    border-radius: 6px;
-    color: #333;
+    background-color: #f1f5f9; /* Clean slate background instead of dull gray */
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    color: #334155;
+    font-size: 15px;
+    font-weight: 500;
+    
+    /* Adds a tiny bit of responsiveness when hovering over list items */
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+/* Subtle hover effect for the items to make the app feel interactive */
+li:hover {
+    background-color: #e2e8f0;
+    transform: translateY(-1px);
+    cursor: pointer;
 }
