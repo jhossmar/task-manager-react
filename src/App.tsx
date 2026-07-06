@@ -26,7 +26,11 @@ function App() {
 
     const fetchTasks = async () => {
       try {
-        const response = await fetch("http://localhost:3000/tasks");
+        const response = await fetch("http://localhost:3000/tasks", {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
         const data = await response.json();
         setTasks(data);
       } catch (error) {
@@ -73,7 +77,7 @@ function App() {
     try {
       const response = await fetch("http://localhost:3000/tasks", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify({ text })
       });
       const newTask = await response.json();
@@ -84,7 +88,12 @@ function App() {
   };
 
   const deleteTask = (id: number) => {
-    fetch(`http://localhost:3000/tasks/${id}`, { method: "DELETE" })
+    fetch(`http://localhost:3000/tasks/${id}`,{ 
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}` // 🔥 Authorized
+      }
+    })
       .then((response) => {
         if (!response.ok) throw new Error("Error al eliminar");
         setTasks(tasks.filter((task) => task.id !== id));
@@ -94,7 +103,7 @@ function App() {
 
   const toggleTask = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:3000/tasks/${id}`, { method: "PUT" });
+      const response = await fetch(`http://localhost:3000/tasks/${id}`, { method: "PUT", headers: { "Authorization": `Bearer ${token}` } });
       if (!response.ok) throw new Error("Error al actualizar");
       const updatedTask = await response.json();
       setTasks(tasks.map((t) => (t.id === id ? updatedTask : t)));
