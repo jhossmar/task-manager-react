@@ -4,8 +4,8 @@ const cors = require("cors");
 const express = require("express");
 //import { PrismaClient } from "@prisma/client";
 // PRISMA CHANGE: Import Prisma Client
-//const { PrismaClient } = require("@prisma/client");
-import { PrismaClient } from "./generated/prisma/index.js";
+const { PrismaClient } = require("@prisma/client");
+//import { PrismaClient } from "./generated/prisma/index.js";
 //import express from "express";
 //import cors from "cors";
 //import jwt from "jsonwebtoken";
