@@ -29,7 +29,7 @@ function TaskCard({ task, onDeleteTask, onToggleTask }: TaskCardProps) {
 
       {/* SECCIÓN DERECHA: Botón de eliminar */}
       <button className="delete-btn" onClick={() => onDeleteTask(task.id)}>
-        Eliminar
+        Delete
       </button>
 
     </div>

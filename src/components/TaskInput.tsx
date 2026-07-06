@@ -26,7 +26,7 @@ function TaskInput(props: TaskInputProps) {
                 onChange={(event) => setText(event.target.value)}
             />
             <button onClick={handleSubmit}>
-                Agregar
+                Add
             </button>
         </div>
     )

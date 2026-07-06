@@ -134,7 +134,7 @@ function App() {
   if (!token) {
     return (
       <div className="app-container login-container">
-        <h2>Iniciar Sesión</h2>
+        <h2>Login</h2>
         <form onSubmit={handleLogin} className="login-form">
           <input 
             type="email" 
@@ -151,7 +151,7 @@ function App() {
             required 
           />
           {loginError && <p className="error-message">{loginError}</p>}
-          <button type="submit">Ingresar</button>
+          <button type="submit">Login</button>
         </form>
       </div>
     );
@@ -161,7 +161,7 @@ function App() {
   return (
     <div className="app-container">
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <button onClick={handleLogout} className="logout-btn">Cerrar Sesión</button>
+        <button onClick={handleLogout} className="logout-btn">Logout</button>
       </div>
       
       <Header />
