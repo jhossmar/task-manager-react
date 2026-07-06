@@ -4,6 +4,8 @@
 //const express = require("express");
 //import { PrismaClient } from "@prisma/client";
 // PRISMA CHANGE: Import Prisma Client
+
+import bcrypt from "bcryptjs";
 import express from "express";
 import cors from "cors";
 import jwt from "jsonwebtoken";
@@ -44,7 +46,56 @@ app.get("/", (req: any, res: any) => {
   res.send("Backend is working!");
 });
 
-// NEW CHANGE: Look up user in PostgreSQL via Prisma
+
+app.post("/register", async (req: any, res: any) => {
+  const {  email, password } = req.body || {};
+
+  if ( !email || !password) {
+    return res.status(400).json({
+      message: "Email and password are required"
+    });
+  }
+
+  try {
+    // Check if the user already exists in PostgreSQL
+    const existingUser = await prisma.user.findUnique({
+      where: { email: email }
+    });
+
+    if (existingUser) {
+      return res.status(409).json({
+        message: "User already exists"
+      });
+    }
+
+    // Hash the password before saving it to the database
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create a new user in PostgreSQL via Prisma
+    const newUser = await prisma.user.create({
+      data: {
+        email: email,
+        password: hashedPassword
+      }
+    });
+
+    return res.status(201).json({
+      message: "User registered successfully",
+      user: { id: newUser.id, email: newUser.email }
+    });
+  } catch (error) {
+    // Cast the error as an Error object to access its message safely
+    const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+
+    return res.status(500).json({
+      message: "Internal server error during registration",
+      error: errorMessage
+    });
+  }
+});
+
+
+// NEW CHANGE: Look up user in PostgreSQL via Prisma with bcrypt verification
 app.post("/login", async (req: any, res: any) => {
   const { email, password } = req.body || {};
 
@@ -54,33 +105,42 @@ app.post("/login", async (req: any, res: any) => {
       where: { email: email }
     });
 
-    // 2. Check if user exists and password matches
-    if (user && user.password === password) {
-      const token = jwt.sign(
-        { email: user.email },
-        "secret_key",
-        { expiresIn: "1h" }
-      );
+    // 2. If user exists, use bcrypt to compare the plain-text password 
+    // with the encrypted hash string saved in your database (user.password)
+    if (user) {
+      const isMatch = await bcrypt.compare(password, user.password);
 
-      return res.json({
-        message: "Login successful",
-        token: token
-      });
-    } else {
-      return res.status(401).json({
-        message: "Invalid credentials"
-      });
+      if (isMatch) {
+        const token = jwt.sign(
+          { email: user.email },
+          "secret_key",
+          { expiresIn: "1h" }
+        );
+
+        return res.json({
+          message: "Login successful",
+          token: token
+        });
+      }
     }
-  } catch (error) {
-  // Cast the error as an Error object to access its message safely
-  const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
 
-  return res.status(500).json({
-    message: "Internal server error during login",
-    error: errorMessage
-  });
-}
+    // 3. Fallthrough for both: user not found OR password didn't match
+    // (Keeping the error message identical prevents attackers from guessing valid emails)
+    return res.status(401).json({
+      message: "Invalid credentials"
+    });
+
+  } catch (error) {
+    // Cast the error as an Error object to access its message safely
+    const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+
+    return res.status(500).json({
+      message: "Internal server error during login",
+      error: errorMessage
+    });
+  }
 });
+
 
 // NEW JWT CHANGE: This is a protected route.
 // NEW JWT CHANGE: The user must send a valid token to access this route.
