@@ -91,7 +91,11 @@ app.get("/profile", (req: any, res: any) => {
 
 // PRISMA CHANGE: GET /tasks now reads from PostgreSQL instead of the array
 app.get("/tasks", async (req: any, res: any) => {
-  const tasksFromDatabase = await prisma.task.findMany();
+  const tasksFromDatabase = await prisma.task.findMany({
+    orderBy: {
+      id: 'asc' // Keeps them ordered by their creation sequence (ID)
+    }
+  });
   res.json(tasksFromDatabase);
 });
 
@@ -125,15 +129,45 @@ app.post("/tasks", async (req: any, res: any) => {
 });
 
 
-app.put("/tasks/:id", (req: any, res: any) => {
-  const id = Number(req.params.id);
-  const task = tasks.find((task) => task.id === id);
-  if (!task) {
-    return res.status(404).json({ message: "Task not found" });
-  }
+// app.put("/tasks/:id", (req: any, res: any) => {
+//   const id = Number(req.params.id);
+//   const task = tasks.find((task) => task.id === id);
+//   if (!task) {
+//     return res.status(404).json({ message: "Task not found" });
+//   }
   
-  task.completed = !task.completed;
-  res.json(task);
+//   task.completed = !task.completed;
+//   res.json(task);
+// });
+
+// NEW CHANGE: PUT /tasks/:id now updates the task in PostgreSQL using Prisma
+app.put("/tasks/:id", async (req: any, res: any) => {
+  const id = Number(req.params.id);
+
+  try {
+    // 1. Find the current task to know its current 'completed' status
+    const task = await prisma.task.findUnique({
+      where: { id: id }
+    });
+
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    // 2. Toggle the completed status in the database
+    const updatedTask = await prisma.task.update({
+      where: { id: id },
+      data: { completed: !task.completed }
+    });
+
+    // 3. Return the updated task
+    res.json(updatedTask);
+
+  } catch (error) {
+    res.status(500).json({ 
+      message: "Error updating task status" 
+    });
+  }
 });
 
 // app.delete("/tasks/:id", (req: any, res: any) => {

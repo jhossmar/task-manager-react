@@ -1,67 +1,142 @@
-.title {
-    font-size: 24px;
-    font-weight: 600;
-    color: #1765e2; /* Darker slate for better readability */
-    margin-bottom: 12px;
-}
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f8fafc; /* Modern, soft slate-gray background */
-    padding: 40px 20px;
-    margin: 0;
-    -webkit-font-smoothing: antialiased;
+  background-color: #f1f5f9;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
+/* Tarjeta contenedora principal */
 .app-container {
-    max-width: 600px;
-    margin: auto;
-    background-color: #ffffff;
-    padding: 35px;
-    border-radius: 16px; /* Smoother, larger corner rounding */
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05); /* Soft, subtle modern shadow */
+  background: white;
+  width: 100%;
+  max-width: 450px;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  text-align: center;
 }
 
-header {
-    margin-bottom: 28px;
-    text-align: center;
+/* Input y formulario */
+input[type="text"] {
+  width: 65%;
+  padding: 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+input[type="text"]:focus {
+  border-color: #6366f1;
 }
 
-header h1 {
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    color: #0f172a; /* Deeper, rich dark color for better contrast */
-    letter-spacing: -0.5px;
+button {
+  padding: 12px 18px;
+  background-color: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+button:hover {
+  background-color: #4f46e5;
 }
 
-header p {
-    color: #64748b; /* Lighter, muted slate for subtitles */
-    margin-top: 0;
-    font-size: 15px;
+/* Lista de tareas */
+.task-list {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-ul {
-    padding: 0;
-    margin: 24px 0 0 0;
+/* Tarjeta individual de tarea */
+.task-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+.task-card:hover {
+  background: #f1f5f9;
+  transform: translateY(-1px);
 }
 
-li {
-    list-style: none;
-    background-color: #f1f5f9; /* Clean slate background instead of dull gray */
-    padding: 14px 18px;
-    margin-bottom: 12px;
-    border-radius: 8px;
-    color: #334155;
-    font-size: 15px;
-    font-weight: 500;
-    
-    /* Adds a tiny bit of responsiveness when hovering over list items */
-    transition: transform 0.2s ease, background-color 0.2s ease;
+.task-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-/* Subtle hover effect for the items to make the app feel interactive */
-li:hover {
-    background-color: #e2e8f0;
-    transform: translateY(-1px);
-    cursor: pointer;
+.task-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
 }
+
+.task-text {
+  font-weight: 500;
+  color: #334155;
+}
+
+/* Estilo obligatorio para tareas completadas */
+.task-card.completed {
+  opacity: 0.5;
+  background: #f1f5f9;
+}
+.task-card.completed .task-text {
+  text-decoration: line-through;
+  color: #94a3b8;
+}
+
+/* Botón de eliminar interno */
+.delete-btn {
+  background-color: #ef4444;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  border-radius: 6px;
+}
+.delete-btn:hover {
+  background-color: #dc2626;
+}
+
+/* Estado Vacío */
+.empty-state-container {
+  padding: 20px;
+  background: #f0fdf4;
+  border: 1px dashed #22c55e;
+  border-radius: 12px;
+  margin-top: 25px;
+}
+.empty-state-text {
+  color: #166534;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Footer / Contadores */
+.app-footer {
+  margin-top: 30px;
+  padding-top: 15px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+}
+.footer-stat span {
+  color: #1e293b;
+}
+.stat-done { color: #10b981 !important; }
+.stat-pending { color: #f59e0b !important; }

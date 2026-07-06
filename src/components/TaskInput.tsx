@@ -18,14 +18,16 @@ function TaskInput(props: TaskInputProps) {
 };
 
     return(
-        <div className="task-input">
+        <div>
             <input
                 type="text"
+                placeholder="Escribir una nueva tarea"
                 value={text}
-                onChange={(e) => setText(e.target.value)}
-                placeholder="Agregar una nueva tarea"
+                onChange={(event) => setText(event.target.value)}
             />
-            <button onClick={handleSubmit}>Agregar</button>
+            <button onClick={handleSubmit}>
+                Agregar
+            </button>
         </div>
     )
 }

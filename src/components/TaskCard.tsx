@@ -10,18 +10,30 @@ type TaskCardProps = {
     onToggleTask: (id: number) => void;
 }
 
-function TaskCard(props: TaskCardProps) {
-    return (
-        <li className={props.task.completed ? "completed" : "task"}>
-           <input
-                type="checkbox"
-                checked={props.task.completed}
-                onChange={() => props.onToggleTask(props.task.id)}
-            />
+function TaskCard({ task, onDeleteTask, onToggleTask }: TaskCardProps) {
+  return (
+    // Si la tarea está completada, el CSS le aplicará opacidad y una línea encima
+    <div className={`task-card ${task.completed ? "completed" : ""}`}>
+      
+      {/* SECCIÓN IZQUIERDA: Checkbox + Texto */}
+      <div className="task-content">
+        <input
+          type="checkbox"
+          className="task-checkbox"
+          checked={task.completed} // Si está en true en la memoria, aparecerá marcado
+          onChange={() => onToggleTask(task.id)} // Al hacer clic, ejecuta la función del padre
+        />
+        {/* Aquí imprimimos de forma dinámica el texto usando llaves {} */}
+        <span className="task-text">{task.text}</span>
+      </div>
 
-            <span>{props.task.text}</span>
-            <button onClick={() => props.onDeleteTask(props.task.id)}>Eliminar</button>
-        </li>
-    );
+      {/* SECCIÓN DERECHA: Botón de eliminar */}
+      <button className="delete-btn" onClick={() => onDeleteTask(task.id)}>
+        Eliminar
+      </button>
+
+    </div>
+  );
 }
+
 export default TaskCard;
