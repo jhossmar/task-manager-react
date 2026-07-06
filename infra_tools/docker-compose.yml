@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    hostname: postgres_db
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${USERNAME}
+      POSTGRES_DB: mydb
+      POSTGRES_PASSWORD: ${PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  client:
+    image: dpage/pgadmin4
+    container_name: pgadmin_web_client
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${WEB_PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${WEB_PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+
+
+volumes:
+  postgres_data:
