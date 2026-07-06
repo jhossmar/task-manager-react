@@ -2,9 +2,16 @@
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const express = require("express");
+//import { PrismaClient } from "@prisma/client";
 // PRISMA CHANGE: Import Prisma Client
- const { PrismaClient } = require("@prisma/client");
-//import { PrismaClient } from '@prisma/client';
+//const { PrismaClient } = require("@prisma/client");
+import { PrismaClient } from "./generated/prisma/index.js";
+//import express from "express";
+//import cors from "cors";
+//import jwt from "jsonwebtoken";
+//import { PrismaClient } from "./generated/prisma/index.js";
+//const { PrismaClient } = require("./generated/prisma/client");
+//import { PrismaClient } from "@prisma/client";
 //import { PrismaClient } from './generated/prisma/client';
 const app = express();
 const PORT = 3000;
@@ -34,32 +41,43 @@ app.get("/", (req: any, res: any) => {
   res.send("Backend is working!");
 });
 
-// JWT: This is a basic login route.
-// JWT: For now, we are using fixed credentials only for practice.
-app.post("/login", (req: any, res: any) => {
+// NEW CHANGE: Look up user in PostgreSQL via Prisma
+app.post("/login", async (req: any, res: any) => {
   const { email, password } = req.body || {};
-  // JWT: If the credentials are correct, we create a token.
-  // JWT: This is the information stored inside the token.
-  if (email === "admin@test.com" && password === "123456") {
-    const token = jwt.sign(
-      { 
-        email: email 
-      },"secret_key",
-      { 
-        expiresIn: "1h" // JWT: The token will expire in 1 hour.
-        }
+
+  try {
+    // 1. Search for the user by email in PostgreSQL
+    const user = await prisma.user.findUnique({
+      where: { email: email }
+    });
+
+    // 2. Check if user exists and password matches
+    if (user && user.password === password) {
+      const token = jwt.sign(
+        { email: user.email },
+        "secret_key",
+        { expiresIn: "1h" }
       );
+
       return res.json({
         message: "Login successful",
         token: token
       });
-    }else{
-       res.status(401).json({
+    } else {
+      return res.status(401).json({
         message: "Invalid credentials"
       });
     }
+  } catch (error) {
+  // Cast the error as an Error object to access its message safely
+  const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
 
+  return res.status(500).json({
+    message: "Internal server error during login",
+    error: errorMessage
   });
+}
+});
 
 // NEW JWT CHANGE: This is a protected route.
 // NEW JWT CHANGE: The user must send a valid token to access this route.

@@ -1,4 +1,3 @@
-// 1. Importamos useEffect junto a useState
 import { useState, useEffect } from "react";
 import "./App.css";
 import Header from "./components/Header";
@@ -6,8 +5,6 @@ import TaskInput from "./components/TaskInput";
 import TaskList from "./components/TaskList";
 import Footer from "./components/Footer";
 
-// SOLUCIÓN AL ERROR DE TYPESCRIPT:
-// Agregamos 'createdAt' como opcional (?) para que coincida con lo que manda PostgreSQL
 type Task = {
   id: number;
   text: string;
@@ -16,11 +13,17 @@ type Task = {
 };
 
 function App() {
-  // 2. El Estado ahora inicia VACÍO, esperando los datos del backend
   const [tasks, setTasks] = useState<Task[]>([]);
+  // Authentication states
+  const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
 
-  // CARGAR TAREAS DESDE EL BACKEND AL INICIAR
+  // 1. CARGAR TAREAS (Solo si hay un token válido)
   useEffect(() => {
+    if (!token) return;
+
     const fetchTasks = async () => {
       try {
         const response = await fetch("http://localhost:3000/tasks");
@@ -31,17 +34,47 @@ function App() {
       }
     };
     fetchTasks();
-  }, []);
+  }, [token]);
 
-  // 3. AGREGAR una tarea conectada al Backend
+  // 2. MANEJAR INICIO DE SESIÓN
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError("");
+
+    try {
+      const response = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem("token", data.token);
+        setToken(data.token);
+      } else {
+        setLoginError(data.message || "Credenciales incorrectas");
+      }
+    } catch (error) {
+      setLoginError("Error al conectar con el servidor");
+    }
+  };
+
+  // 3. CERRAR SESIÓN
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setToken(null);
+    setTasks([]);
+  };
+
+  // 4. MÉTODOS DE TAREAS (Mantenidos igual)
   const addTask = async (text: string) => {
     try {
       const response = await fetch("http://localhost:3000/tasks", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ text: text })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text })
       });
       const newTask = await response.json();
       setTasks([...tasks, newTask]);
@@ -50,85 +83,67 @@ function App() {
     }
   };
 
-  // 4. ELIMINAR una tarea conectada al Backend
   const deleteTask = (id: number) => {
-    fetch(`http://localhost:3000/tasks/${id}`, {
-      method: "DELETE", // Método HTTP para borrar recursos
-    })
+    fetch(`http://localhost:3000/tasks/${id}`, { method: "DELETE" })
       .then((response) => {
-        if (!response.ok) {
-          throw new Error("Error al eliminar la tarea en el servidor");
-        }
-        // CORRECCIÓN: Como el backend responde con 204 (No Content), 
-        // no hacemos response.json(), pasamos directo a actualizar el estado local.
-        const updatedTasks = tasks.filter((task) => task.id !== id);
-        setTasks(updatedTasks);
+        if (!response.ok) throw new Error("Error al eliminar");
+        setTasks(tasks.filter((task) => task.id !== id));
       })
-      .catch((error) => console.error("Error al eliminar la tarea:", error));
+      .catch((error) => console.error(error));
   };
 
-  // // 5. MARCAR COMO COMPLETADA / PENDIENTE (Local temporal - Reto opcional)
-  // const toggleTask = (id: number) => {
-  //   const updatedTasks = tasks.map((task) => {
-  //     if (task.id === id) {
-  //       return { ...task, completed: !task.completed };
-  //     }
-  //     return task;
-  //   });
-  //   setTasks(updatedTasks);
-  // };
-
-// 5. MARCAR COMO COMPLETADA / PENDIENTE conectada al Backend
   const toggleTask = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:3000/tasks/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error("Error al actualizar la tarea en el servidor");
-      }
-
-      const updatedTaskFromBackend = await response.json();
-
-      // Actualizamos el estado local con la respuesta del backend
-      const updatedTasks = tasks.map((task) => {
-        if (task.id === id) {
-          return updatedTaskFromBackend;
-        }
-        return task;
-      });
-      setTasks(updatedTasks);
-
+      const response = await fetch(`http://localhost:3000/tasks/${id}`, { method: "PUT" });
+      if (!response.ok) throw new Error("Error al actualizar");
+      const updatedTask = await response.json();
+      setTasks(tasks.map((t) => (t.id === id ? updatedTask : t)));
     } catch (error) {
-      console.error("Error al alternar el estado de la tarea:", error);
+      console.error(error);
     }
   };
 
-  // 6. CALCULADORES AUTOMÁTICOS
   const completedTasks = tasks.filter((task) => task.completed).length;
   const pendingTasks = tasks.length - completedTasks;
 
+  // --- VISTA DE LOGIN ---
+  if (!token) {
+    return (
+      <div className="app-container login-container">
+        <h2>Iniciar Sesión</h2>
+        <form onSubmit={handleLogin} className="login-form">
+          <input 
+            type="email" 
+            placeholder="admin@test.com" 
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required 
+          />
+          <input 
+            type="password" 
+            placeholder="123456" 
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required 
+          />
+          {loginError && <p className="error-message">{loginError}</p>}
+          <button type="submit">Ingresar</button>
+        </form>
+      </div>
+    );
+  }
+
+  // --- VISTA PRINCIPAL (TASK MANAGER) ---
   return (
     <div className="app-container">
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <button onClick={handleLogout} className="logout-btn">Cerrar Sesión</button>
+      </div>
+      
       <Header />
-      
       <TaskInput onAddTask={addTask} />
-      
-      <TaskList 
-        tasks={tasks} 
-        onDeleteTask={deleteTask} 
-        onToggleTask={toggleTask} 
-      />
-
-      <Footer 
-        total={tasks.length} 
-        completed={completedTasks} 
-        pending={pendingTasks} 
-      />
+      <TaskList tasks={tasks} onDeleteTask={deleteTask} onToggleTask={toggleTask} />
+      <Footer total={tasks.length} completed={completedTasks} pending={pendingTasks} />
     </div>
   );
 }

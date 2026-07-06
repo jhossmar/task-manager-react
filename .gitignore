@@ -23,3 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 package-lock.json
+
+
+#prisma
+ ./backend/prisma/*
