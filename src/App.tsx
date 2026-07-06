@@ -14,8 +14,8 @@ type Task = {
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
-  // Authentication states
-  const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
+  // Authentication states safely initialized
+  const [token, setToken] = useState<string | null>(() => localStorage.getItem("token"));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -31,8 +31,16 @@ function App() {
             "Authorization": `Bearer ${token}`
           }
         });
+        
         const data = await response.json();
-        setTasks(data);
+        
+        // Ensure data is actually an array before setting state to avoid crashes
+        if (response.ok && Array.isArray(data)) {
+          setTasks(data);
+        } else {
+          console.error("Backend did not return an array:", data);
+          handleLogout(); // Clear bad tokens gracefully
+        }
       } catch (error) {
         console.error("Error al cargar tareas:", error);
       }
@@ -72,7 +80,7 @@ function App() {
     setTasks([]);
   };
 
-  // 4. MÉTODOS DE TAREAS (Mantenidos igual)
+  // 4. MÉTODOS DE TAREAS
   const addTask = async (text: string) => {
     try {
       const response = await fetch("http://localhost:3000/tasks", {
@@ -88,10 +96,10 @@ function App() {
   };
 
   const deleteTask = (id: number) => {
-    fetch(`http://localhost:3000/tasks/${id}`,{ 
+    fetch(`http://localhost:3000/tasks/${id}`, { 
       method: "DELETE",
       headers: {
-        "Authorization": `Bearer ${token}` // 🔥 Authorized
+        "Authorization": `Bearer ${token}`
       }
     })
       .then((response) => {
@@ -103,7 +111,13 @@ function App() {
 
   const toggleTask = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:3000/tasks/${id}`, { method: "PUT", headers: { "Authorization": `Bearer ${token}` } });
+      const response = await fetch(`http://localhost:3000/tasks/${id}`, { 
+        method: "PUT", 
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` 
+        } 
+      });
       if (!response.ok) throw new Error("Error al actualizar");
       const updatedTask = await response.json();
       setTasks(tasks.map((t) => (t.id === id ? updatedTask : t)));
@@ -112,8 +126,9 @@ function App() {
     }
   };
 
-  const completedTasks = tasks.filter((task) => task.completed).length;
-  const pendingTasks = tasks.length - completedTasks;
+  // Safe checks to avoid filtering undefined properties
+  const completedTasks = Array.isArray(tasks) ? tasks.filter((task) => task.completed).length : 0;
+  const pendingTasks = Array.isArray(tasks) ? tasks.length - completedTasks : 0;
 
   // --- VISTA DE LOGIN ---
   if (!token) {
