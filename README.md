@@ -34,7 +34,7 @@ If Prisma packages are not already installed in `backend`, run:
 
 ```bash
 cd backend
-npm install prisma --save-dev @prisma/client
+npm install prisma@6.19.3 @prisma/client@6.19.3 --save-dev
 ```
 
 ### 2. Configure the backend environment
