@@ -171,6 +171,16 @@ From the repository root:
 npm run dev
 ```
 
+## 📜 Comandos disponibles
+ 
+| Comando          | Descripción                                |
+|------------------|--------------------------------------------|
+| `npm run dev`    | Levanta el entorno de desarrollo           |
+| `npm run build`  | Genera el build de producción              |
+| `npm test`       | Corre las pruebas automatizadas            |
+ 
+
+
 ### Notes
 
 - Start the backend first so the frontend can connect to the API.
