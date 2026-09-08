@@ -24,6 +24,8 @@ This repository has two services:
 - Frontend: the React/Vite app in the repository root
 - Backend: the Express/Prisma app in `backend`
 
+[![CI](https://github.com/jhossmar/task-manager-react/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/jhossmar/task-manager-react/actions/workflows/ci.yml)
+
 ### 1. Install dependencies
 
 ```bash
