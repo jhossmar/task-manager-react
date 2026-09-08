@@ -1,5 +1,5 @@
 import TaskCard from "./TaskCard";
-import EmptyState from "./EmptyStates"; 
+import EmptyState from "./EmptyState"; 
 
 type Task = {
   id: number;
