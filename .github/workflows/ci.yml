@@ -15,11 +15,11 @@ jobs:
         working-directory: .
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '24'
           cache: 'npm'
-          cache-dependency-path: ./package-lock.json
+          cache-dependency-path: './package-lock.json'
       - run: npm ci
       - run: npm run lint
       - run: npm run build
@@ -35,10 +35,7 @@ jobs:
         with:
           node-version: '24'
           cache: 'npm'
-          cache-dependency-path: backend/package-lock.json
+          cache-dependency-path: 'package-lock.json'
       - run: npm ci
       - run: npm run lint
       - run: npm run build
-
-
-          
