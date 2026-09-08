@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node --watch --import ts-node/esm src/index.ts"
+    "dev": "node --watch --import ts-node/esm src/index.ts",
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "",
