@@ -4,6 +4,7 @@ import cors from "cors";
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 
+
 const app = express();
 const PORT = 3000;
 const prisma = new PrismaClient();
@@ -12,6 +13,12 @@ const JWT_SECRET = "secret_key"; // Centralized secret key
 app.use(cors());
 app.use(express.json());
 
+export default app;
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
+}
 // ==========================================
 //  AUTHENTICATION MIDDLEWARE
 // ==========================================
