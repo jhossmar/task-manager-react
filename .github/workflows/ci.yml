@@ -23,7 +23,7 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run build
-      - run: npm vitest run
+      - run: npx vitest run
   backend:
     name: Backend -lint & build
     runs-on: ubuntu-latest
