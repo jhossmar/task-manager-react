@@ -32,7 +32,7 @@ describe('API de tareas', () => {
       .send({ text: '' })
 
     expect(res.status).toBe(400)
-    expect(res.body.error).toBe('El texto de la tarea no puede estar vacío')
+    expect(res.body.message).toBe('Task text is required')
   })
 
 })
