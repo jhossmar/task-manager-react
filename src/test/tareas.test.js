@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import request from 'supertest'
 import jwt from 'jsonwebtoken'
-import app from '/home/ubuntu/Vitae/task-manager-react/backend/src/index.ts' // Update relative path to your Express file
+import app from '../../backend/src/index.ts' // Update relative path to your Express file
 
 const mockToken = jwt.sign({ email: 'test@example.com' }, 'secret_key')
 
