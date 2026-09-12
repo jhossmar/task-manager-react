@@ -10,11 +10,24 @@ jobs:
   frontend:
     name: Frontend -Lint & Build
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: taskmanager
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     defaults:
       run:
         working-directory: .
     env:
-      DATABASE_URL: "postgresql://user:pass@localhost:5432/db"
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/taskmanager?schema=public
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -27,6 +40,9 @@ jobs:
       - name: Generar cliente de Prisma
         working-directory: ./backend
         run: npx prisma generate --schema=prisma/schema.prisma
+      - name: Migrar base de datos
+        working-directory: ./backend
+        run: npx prisma migrate deploy --schema=prisma/schema.prisma
       - run: npm run lint
       - run: npm run build
       - run: npx vitest run
