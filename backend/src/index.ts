@@ -165,7 +165,3 @@ app.delete("/tasks/:id", authenticateToken, async (req: any, res: any) => {
     res.status(404).json({ message: "Task not found" });
   }
 });
-
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
