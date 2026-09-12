@@ -15,5 +15,9 @@ export default defineConfig({
         statements: 20,
       },
     },
+        exclude: [
+    '**/node_modules/**',
+    'e2e/**',
+    ],
   },
 })
