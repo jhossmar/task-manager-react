@@ -8,7 +8,10 @@ import { PrismaClient } from "@prisma/client";
 const app = express();
 const PORT = 3000;
 const prisma = new PrismaClient();
-const JWT_SECRET = "secret_key"; // Centralized secret key
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error("JWT_SECRET  was not defined");
+}
 
 app.use(cors());
 app.use(express.json());
