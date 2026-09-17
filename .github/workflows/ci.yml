@@ -57,6 +57,7 @@ jobs:
           --health-retries 5
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/taskmanager?schema=public
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -71,6 +72,9 @@ jobs:
       - name: Migrar base de datos
         working-directory: ./backend
         run: npx prisma migrate deploy --schema=prisma/schema.prisma
+      - name: Sembrar datos de pruebas
+        working-directory: ./backend
+        run: npx prisma db seed 
       - run: npx vitest run --coverage
 
   e2e:
@@ -91,6 +95,7 @@ jobs:
           --health-retries 5
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/taskmanager?schema=public
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -105,6 +110,9 @@ jobs:
       - name: Migrar base de datos
         working-directory: ./backend
         run: npx prisma migrate deploy --schema=prisma/schema.prisma
+      - name: Sembrar datos de pruebas
+        working-directory: ./backend
+        run: npx prisma db seed
       - run: npx playwright install --with-deps chromium
       - name: Start backend
         run: npm run dev --prefix backend &

@@ -3,7 +3,7 @@ import request from 'supertest'
 import jwt from 'jsonwebtoken'
 import app from '../../backend/src/index.ts' // Update relative path to your Express file
 
-const mockToken = jwt.sign({ email: 'test@example.com' }, 'secret_key')
+const mockToken = jwt.sign({ email: 'test@example.com' }, process.env.JWT_SECRET)
 
 describe('API de tareas', () => {
   it('crea una tarea nueva', async () => {
