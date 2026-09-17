@@ -12,6 +12,12 @@ async function main() {
       completed: false,
     },
   })
+
+  // Sincroniza la secuencia de auto-incremento con el id más alto real,
+  // para que Postgres no vuelva a intentar generar un id ya usado.
+  await prisma.$executeRawUnsafe(
+    `SELECT setval(pg_get_serial_sequence('"Task"', 'id'), (SELECT COALESCE(MAX(id), 1) FROM "Task"));`
+  )
 }
 
 main()
