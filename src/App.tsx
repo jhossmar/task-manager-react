@@ -5,7 +5,7 @@ import TaskInput from "./components/TaskInput";
 import TaskList from "./components/TaskList";
 import Footer from "./components/Footer";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URLL || "http://localhost:3000";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
 type Task = {
   id: number;
