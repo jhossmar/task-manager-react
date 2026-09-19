@@ -126,7 +126,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Instalar Railway CLI
-        run: curl -fsSL https://railway.com/install.sh | sh
+        run: |
+          curl -fsSL https://railway.com/install.sh | sh
+          echo "$HOME/.railway/bin" >> $GITHUB_PATH
       - name: Desplegar a Railway
         run: railway up --service backend --environment staging
         env:
