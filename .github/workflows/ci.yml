@@ -129,7 +129,9 @@ jobs:
         run: |
           curl -fsSL https://railway.com/install.sh | sh
           echo "$HOME/.railway/bin" >> $GITHUB_PATH
-      - name: Desplegar a Railway
+      - name: Desplegar a Railway the backend
         run: railway up --service backend --environment staging
+      - name: Desplegar a Railway the frontend
+        run: railway up --service frontend --environment staging
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
