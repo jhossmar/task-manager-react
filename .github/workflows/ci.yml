@@ -4,7 +4,11 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: 'Escribe DEPLOY  to confirm the deployment in production'
+        required: true
 jobs:
   frontend:
     name: Frontend -Lint & Build
@@ -137,3 +141,21 @@ jobs:
         run: railway up --service frontend --environment staging
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+  deploy-production:
+    name: Deploy a Production (manual)
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.confirmation == 'DEPLOY'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar Railway CLI
+        run: |
+          curl -fsSL https://railway.com/install.sh | sh
+          echo "$HOME/.railway/bin" >> $GITHUB_PATH
+      - name: Desplegar a Railway the backend
+        run: railway up --service backend --environment production
+        env:
+          RAILWAY_TOKEN: ${{ secrets.PROD_RAILWAY_TOKEN }}
+      - name: Desplegar a Railway the frontend
+        run: railway up --service frontend --environment production
+        env:
+          RAILWAY_TOKEN: ${{ secrets.PROD_RAILWAY_TOKEN }}
