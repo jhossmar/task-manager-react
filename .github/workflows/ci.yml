@@ -131,6 +131,8 @@ jobs:
           echo "$HOME/.railway/bin" >> $GITHUB_PATH
       - name: Desplegar a Railway the backend
         run: railway up --service backend --environment staging
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
       - name: Desplegar a Railway the frontend
         run: railway up --service frontend --environment staging
         env:
