@@ -126,7 +126,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Instalar Railway CLI
-        run: npm install -g railway
+        run: curl -fsSL https://railway.com/install.sh | sh
       - name: Desplegar a Railway
         run: railway up --service backend --environment staging
         env:
