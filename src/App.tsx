@@ -5,6 +5,8 @@ import TaskInput from "./components/TaskInput";
 import TaskList from "./components/TaskList";
 import Footer from "./components/Footer";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+
 type Task = {
   id: number;
   text: string;
@@ -26,7 +28,7 @@ function App() {
 
     const fetchTasks = async () => {
       try {
-        const response = await fetch("http://localhost:3000/tasks", {
+        const response = await fetch(`${BACKEND_URL}/tasks`, {
           headers: {
             "Authorization": `Bearer ${token}`
           }
@@ -54,7 +56,7 @@ function App() {
     setLoginError("");
 
     try {
-      const response = await fetch("http://localhost:3000/login", {
+      const response = await fetch(`${BACKEND_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
@@ -83,7 +85,7 @@ function App() {
   // 4. MÉTODOS DE TAREAS
   const addTask = async (text: string) => {
     try {
-      const response = await fetch("http://localhost:3000/tasks", {
+      const response = await fetch(`${BACKEND_URL}/tasks`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify({ text })
@@ -96,7 +98,7 @@ function App() {
   };
 
   const deleteTask = (id: number) => {
-    fetch(`http://localhost:3000/tasks/${id}`, { 
+    fetch(`${BACKEND_URL}/tasks/${id}`, { 
       method: "DELETE",
       headers: {
         "Authorization": `Bearer ${token}`
@@ -111,7 +113,7 @@ function App() {
 
   const toggleTask = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:3000/tasks/${id}`, { 
+      const response = await fetch(`${BACKEND_URL}/tasks/${id}`, { 
         method: "PUT", 
         headers: { 
           "Content-Type": "application/json",
