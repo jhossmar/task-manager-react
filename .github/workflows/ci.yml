@@ -121,7 +121,7 @@ jobs:
   deploy-staging:
     name: Deploy a Staging
     needs: [frontend, backend, pruebas, e2e]
-    if: github.ref == 'refs/heads/main && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -131,4 +131,3 @@ jobs:
         run: railway up --service backend --environment staging
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          
