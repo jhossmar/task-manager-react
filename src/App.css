@@ -140,3 +140,15 @@ button:hover {
 }
 .stat-done { color: #10b981 !important; }
 .stat-pending { color: #f59e0b !important; }
+
+.clear-completed-btn {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  background-color: transparent;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+.clear-completed-btn:hover {
+  background-color: #f1f5f9;
+  color: #334155;
+}
