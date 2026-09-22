@@ -111,6 +111,23 @@ function App() {
       .catch((error) => console.error(error));
   };
 
+  const clearCompleted = async () => {
+    const completedIds = tasks.filter((task) => task.completed).map((task) => task.id);
+    try {
+      await Promise.all(
+        completedIds.map((id) =>
+          fetch(`${BACKEND_URL}/tasks/${id}`, {
+            method: "DELETE",
+            headers: { "Authorization": `Bearer ${token}` }
+          })
+        )
+      );
+      setTasks(tasks.filter((task) => !task.completed));
+    } catch (error) {
+      console.error("Error al limpiar tareas completadas:", error);
+    }
+  };
+
   const toggleTask = async (id: number) => {
     try {
       const response = await fetch(`${BACKEND_URL}/tasks/${id}`, { 
@@ -169,7 +186,12 @@ function App() {
       <Header />
       <TaskInput onAddTask={addTask} />
       <TaskList tasks={tasks} onDeleteTask={deleteTask} onToggleTask={toggleTask} />
-      <Footer total={tasks.length} completed={completedTasks} pending={pendingTasks} />
+      <Footer
+        total={tasks.length}
+        completed={completedTasks}
+        pending={pendingTasks}
+        onClearCompleted={clearCompleted}
+      />
     </div>
   );
 }
